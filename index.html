@@ -664,6 +664,12 @@ body::after {
   .footer { padding-block: var(--s-6); }
 }
 </style>
+<!-- MOTION LAYER — funnel-motion-choreographer. Loaded in <head> so the hero
+     entrance owns first paint (no static-then-animate flash). CSS-only: the
+     reveal grammar is native scroll-driven (animation-timeline: view()), so
+     there is no motion.js. Reduced-motion / non-supporting browsers render
+     the craftsman's verified static page unchanged. -->
+<link rel="stylesheet" href="assets/motion.css">
 </head>
 <body id="top">
 
@@ -1124,8 +1130,13 @@ body::after {
   </section>
 </div>
 
-<!-- motion layer seam: funnel-motion-choreographer adds motion.css / motion.js after this build.
-     Hooks: section[data-beat] boundaries, each beat's header block, .peak-cta, .confirm .spark. -->
+<!-- motion layer seam — FILLED 2026-06-12 by funnel-motion-choreographer.
+     Implementation: assets/motion.css, linked in <head> (render-blocking by design — the hero
+     entrance must own first paint). Zero JS: reveals are native CSS scroll-driven animations.
+     Hooks used: hero copy stack + figure (entrance) · .desire-head/.victory-head/.peak-cta/
+     .prices-head/.proof-wall/.mount>* (one reveal grammar) · .victory .frame + .cap-quote +
+     .spark--blush (signature colonnade) · .drawer/.drawer-overlay (sheet rise) · .confirm .spark
+     (✦ micro-bloom). Vulnerability, fast lane, and LINGER are motionless by contract. -->
 
 <script>
 (function () {

@@ -1,0 +1,136 @@
+/* ==========================================================================
+   MOTION LAYER — funnel-motion-choreographer · 2026-06-12
+   Mood (emotional-brief): exhale-in-expert-hands — masterful calm.
+   Restraint is the Status register's flex; single arousal peak at booking.
+
+   Budget (doctrine V.d): ONE entrance choreography (hero, ≤1.5s) ·
+   ONE reveal grammar at beat boundaries (native CSS scroll-driven, zero JS) ·
+   micro-feedback ≤300ms (already in the craftsman's base CSS) ·
+   ONE signature moment (the Victory colonnade).
+
+   Hard gates honored here:
+   - Everything sits behind @media (prefers-reduced-motion: no-preference):
+     reduced-motion users get the verified static page, complete and unchanged.
+   - transform/opacity only → CLS 0 by construction.
+   - Scroll-driven reveals live behind @supports (animation-timeline: view()):
+     non-supporting browsers (Firefox) get the static page, no JS fallback needed.
+   - Elements ENTER (rise/scale-toward); nothing recedes. No ambient motion
+     beside reading copy. Vulnerability (Beat 3) and the fast lane (Beat 1b)
+     are deliberately motionless by composition contract — the hush and the
+     flat-calm ARE the design. LINGER settles statically.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   SHARED KEYFRAMES (from-only; fill:both holds the pre-state without layout)
+   -------------------------------------------------------------------------- */
+@keyframes m-rise   { from { opacity: 0; transform: translateY(14px); } }
+@keyframes m-reveal { from { opacity: 0; transform: translateY(18px); } }
+@keyframes m-frame  { from { opacity: 0; transform: translateY(30px) scale(.96); } }
+@keyframes m-figure { from { opacity: 0; transform: scale(.965); } }
+@keyframes m-bloom  { from { opacity: 0; transform: scale(.2); } }
+@keyframes m-fade   { from { opacity: 0; } }
+@keyframes m-sheet-up   { from { opacity: 0; transform: translateY(28px); } }
+@keyframes m-sheet-side { from { opacity: 0; transform: translateX(28px); } }
+
+@media (prefers-reduced-motion: no-preference) {
+
+  /* ------------------------------------------------------------------------
+     1 · ENTRANCE CHOREOGRAPHY — Beat 1 HERO (CAPTURE), one-time, ends ~0.9s
+     Headline-first (the promise is legible from ~150ms, fully set at 500ms);
+     portrait settles scale .965→1 (toward the viewer — onset, not recession);
+     proof chip and fast-lane door follow. Header + Book pill: NOT animated —
+     the commit port is present from first paint by palette law.
+     Easing: expo-out (.16,1,.3,1) — the page's one personality curve.
+     ------------------------------------------------------------------------ */
+  .hero h1          { animation: m-rise .5s  cubic-bezier(.16,1,.3,1) both; }
+  .hero .lockup     { animation: m-rise .45s cubic-bezier(.16,1,.3,1) .12s both; }
+  .hero .subhead    { animation: m-rise .45s cubic-bezier(.16,1,.3,1) .22s both; }
+  .hero .proof-chip { animation: m-rise .45s cubic-bezier(.16,1,.3,1) .32s both; }
+  .hero .down       { animation: m-rise .45s cubic-bezier(.16,1,.3,1) .42s both; }
+  .hero-figure      { animation: m-figure .8s cubic-bezier(.16,1,.3,1) .1s both; }
+
+  /* ------------------------------------------------------------------------
+     2 · REVEAL GRAMMAR — beat boundaries only, scroll-driven CSS (zero JS).
+     One grammar: rise 18px + fade, scrubbed over the element's viewport
+     entry, expo-out so the onset is quick and the settle is calm.
+     Applied to: Desire head (Beat 2), Victory head (Beat 4), peak CTA
+     (Beat 4 close — the ask onsets at peak), Prices head (Beat 5),
+     Proof wall (Beat 6), Commit mount (Beat 7).
+     NOT applied to: fast lane (flat-calm contract), Vulnerability (the hush),
+     LINGER (the settle), any mid-beat reading copy.
+     ------------------------------------------------------------------------ */
+  @supports (animation-timeline: view()) {
+    .desire-head,
+    .victory-head,
+    .peak-cta,
+    .prices-head,
+    .proof-wall,
+    .mount > * {
+      animation: m-reveal 1ms cubic-bezier(.16,1,.3,1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 32%;
+    }
+
+    /* --------------------------------------------------------------------
+       3 · SIGNATURE MOMENT (Tier 2) — "The colonnade enters" · Beat 4 VICTORY
+       The arch frames carrying her real before/after work rise into place
+       in sequence — lead arch, lintel, then the pair — each scaling .96→1
+       (toward the viewer: looming onset at peak transportation). The
+       "Completely fixed my brows" caption follows its evidence, and the
+       page's single blush ✦ blooms last. Scroll-scrubbed: the visitor's
+       own hand paces the reveal — masterful calm, never theater.
+       Frames animate as whole figures; inner images are untouched
+       (the lead's 1.12 zoom-crop transform is composition law).
+       -------------------------------------------------------------------- */
+    .victory .frame {
+      animation: m-frame 1ms cubic-bezier(.16,1,.3,1) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+    .victory .frame--lintel               { animation-range: entry 0% cover 40%; }
+    .victory .frame-pair .frame:first-child { animation-range: entry 0% cover 45%; }
+    .victory .frame-pair .frame:last-child  { animation-range: entry 0% cover 52%; }
+
+    .victory .frame--lead .cap-quote {
+      animation: m-reveal 1ms cubic-bezier(.16,1,.3,1) both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 50%;
+    }
+    .victory .spark--blush {
+      display: inline-block; /* transforms need a box; flow unchanged */
+      animation: m-bloom 1ms cubic-bezier(.16,1,.3,1) both;
+      animation-timeline: view();
+      animation-range: entry 30% cover 58%;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     4 · DRAWER CHOREOGRAPHY — micro-feedback on the page's core interaction.
+     Bottom sheet rises (mobile) / side sheet slides in (desktop), ≤300ms;
+     scrim fades 200ms. Elements enter; dismissal is instant (no exit theater).
+     ------------------------------------------------------------------------ */
+  .drawer-overlay:not([hidden]) {
+    animation: m-fade .2s ease-out both;
+  }
+  .drawer-overlay:not([hidden]) .drawer {
+    animation: m-sheet-up .3s cubic-bezier(.16,1,.3,1) both;
+  }
+  @media (min-width: 900px) {
+    .drawer-overlay:not([hidden]) .drawer {
+      animation: m-sheet-side .3s cubic-bezier(.16,1,.3,1) both;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     5 · CONFIRMATION ✦ MICRO-BLOOM — the booker's LINGER (arc §6 spec:
+     ≤300ms, transform/opacity, one gold bloom, then warm stillness).
+     Plays once when the confirm panel is shown (post-sale state).
+     ------------------------------------------------------------------------ */
+  .confirm .spark {
+    display: inline-block;
+    animation: m-bloom .28s cubic-bezier(.16,1,.3,1) both;
+  }
+
+}
+/* Outside this media block nothing moves: the reduced-motion experience is
+   the form-designer's verified static composition, in full. */

@@ -113,6 +113,10 @@
   --commit-fill-text:  var(--on-commit);
   --commit-fill-hover: var(--gold-commit-hover);
   --commit-focus-ring: var(--gold-light);
+  /* COMPACT-COMMIT variant (palette.md §6.1, addendum 2026-06-12): same fill,
+     same text, SMALLER AREA — salience is regulated by area alone. */
+  --commit-pill-compact-pad: 6px 14px;   /* → 30px visual height */
+  --commit-pill-tap-min:     44px;       /* min hit-area, both axes */
 
   --linger-bg:         #080605;
   --linger-text:       var(--paper);
@@ -186,6 +190,15 @@ body::after {
   font: 600 var(--fs-micro)/1 var(--font-body);
   letter-spacing: .32em; text-transform: uppercase; color: var(--muted);
 }
+/* Tier-1 story-beat kicker (copy.md §13a): bare roman numeral — chapters of one
+   story. Elevated display register, small, letter-spaced; gold hairline-family
+   color (--gold-light: --gold-deep is banned under 24px text, palette rule 2).
+   ✦ flanking ornament ruled optional by composition — not mounted. */
+.kicker--chapter {
+  font: 500 1.125rem/1 var(--font-display);
+  letter-spacing: .32em; text-indent: .32em;
+  color: var(--gold-light); text-transform: none;
+}
 .serif-caps {
   font-family: var(--font-display); font-weight: 600;
   letter-spacing: .38em; text-transform: uppercase; text-indent: .38em;
@@ -216,6 +229,22 @@ body::after {
 .btn-commit:active { transform: translateY(1px) scale(.985); }
 .btn-commit:focus-visible { outline: 2px solid var(--commit-focus-ring); outline-offset: 3px; border-radius: var(--r-pill); }
 .btn-commit--sm { min-height: 44px; padding: .55rem 1.15rem; font-size: var(--fs-small); }
+/* compact-commit variant (palette.md §6.1 — build law): menu-row Book pills.
+   Visual 30px tall (hard caps ≤32px/≤80px); label "Book" only; same reserved
+   fill+text — area, not treatment, regulates salience. Token
+   --commit-pill-compact-type (600 13px/1 inherit) written as longhands: the
+   CSS-wide keyword `inherit` is invalid inside a font shorthand via var(). */
+.btn-commit--compact {
+  position: relative;
+  min-height: 0; height: 30px; padding: var(--commit-pill-compact-pad);
+  font: 600 13px/1 var(--font-body);
+  max-height: 32px; max-width: 80px;
+}
+/* ≥44×44 hit-area via transparent expansion — the FILL never grows */
+.btn-commit--compact::after {
+  content: ""; position: absolute;
+  inset: calc((var(--commit-pill-tap-min) - 30px) / -2) 0;
+}
 
 .link-quiet {
   display: inline-flex; align-items: center; gap: .45rem;
@@ -391,8 +420,16 @@ body::after {
   color: var(--vulnerability-text);
   max-width: 16ch; text-wrap: balance;
 }
+/* Tier-1 kicker in the chroma trough wears the beat's own secondary — every
+   gold ornament is WITHDRAWN from this beat (composition/palette law; the
+   string "II" is copy.md §13a law, the goldlessness is this beat's law). */
+.vuln .kicker--chapter { color: var(--vulnerability-secondary); }
 .vuln-body { display: grid; gap: var(--s-3); }
 .vuln-body p { margin: 0; }
+/* the maybe-verse reads left-aligned (composition §7b F8): the anaphora is the
+   device — a single left edge keeps the three "Maybe" heads in one visual
+   column; the block stays centered in the hush. */
+.maybes { display: grid; gap: .75em; text-align: left; }
 .maybes p { color: var(--vulnerability-secondary); font-size: var(--fs-lead); line-height: 1.7; }
 .stakes { color: var(--vulnerability-text); }
 .turn {
@@ -418,15 +455,34 @@ body::after {
 .gallery { display: grid; gap: var(--s-4); }
 .frame { margin: 0; display: grid; gap: var(--s-2); justify-items: center; }
 .frame .arch-frame { width: 100%; aspect-ratio: 4 / 5; border-color: var(--victory-frame); }
-/* zoom-crop 12%: trims the photos' own white collage borders (measured ~4.7% top/bottom).
-   Cropping only — never grading; the internal before/after seam stays visible. */
-.frame .arch-frame img { transform: scale(1.12); }
+/* zoom-crop 16% (composition §7b F2): the three collage sources share exact geometry
+   (measured): white border 4.70% top/bottom + 8.68% sides, internal 18px seam centered
+   at exactly 50.0% of height. cover in 4:5 crops 10%/side horizontally (kills side
+   borders); scale(1.16) crops 6.9% top/bottom — 4.70% border + 2.2% safety margin, so
+   no edge sliver survives at any breakpoint. Cropping only — never grading. */
+.frame .arch-frame img { transform: scale(1.16); }
+/* the gilded seam: the collage's own white seam (49.6–50.4% of source, mapping to
+   exactly 50% of the frame under any centered scale) is masked by an intentional mount
+   band — beat surface + gold hairlines top and bottom — so the before/after division
+   reads as a deliberate frame element of the colonnade, not leftover collage chrome. */
+.frame .arch-frame::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 50%;
+  height: max(10px, 2.4%); transform: translateY(-50%); z-index: 1;
+  background: var(--victory-surface);
+  border-block: 1px solid var(--victory-frame);
+  pointer-events: none;
+}
 .frame--lintel .panel {
   width: 100%; border: 1.5px solid var(--victory-frame); border-radius: var(--r-edge);
   overflow: hidden; position: relative;
+  /* privacy crop (fact-file §4b: crop at/below the eyes): source is 1111×627 with the
+     client's open eyes from y≈400 down. 3.2:1 band + object-position 50% 3% shows
+     exactly y 8–355 — both brows complete, open eyes out of frame, 8px white top edge
+     trimmed. The wide band is the literal lintel of the colonnade. */
+  aspect-ratio: 3.2 / 1;
 }
 .frame--lintel .panel::before { content:""; position:absolute; inset:7px; border:1px solid var(--victory-frame); opacity:.5; pointer-events:none; }
-.frame--lintel img { width: 100%; height: auto; }
+.frame--lintel img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 3%; }
 
 .frame figcaption { text-align: center; }
 .cap-label { font: 600 var(--fs-micro)/1.4 var(--font-body); letter-spacing: .22em; text-transform: uppercase; color: var(--victory-caption); }
@@ -453,9 +509,12 @@ body::after {
   .frame--lintel { grid-area: lintel; }
   .frame-pair { grid-area: pair; display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); align-items: start; }
 }
+/* 380: the colonnade stacks as a single descending column (composition §7b F3) — at
+   half-width (167px) the pair's brow detail was illegible, and evidence must be
+   READABLE to transport (Part III). Full-width frames restore one focal point per
+   viewport; the scroll cost is spent at the arc's peak, where dwell compounds. */
 @media (max-width: 899px) {
-  .frame-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
-  .frame-pair .cap-label { letter-spacing: .14em; }
+  .frame-pair { display: grid; grid-template-columns: 1fr; gap: var(--s-4); }
 }
 
 /* ==========================================================================
@@ -487,7 +546,9 @@ body::after {
 .svc .name { font: 500 var(--fs-body)/1.35 var(--font-body); color: var(--resolve-text); }
 .svc .dur { font: 500 var(--fs-small)/1 var(--font-body); color: var(--resolve-secondary); }
 .row .price { font: 700 var(--fs-lead)/1 var(--font-body); font-variant-numeric: tabular-nums; color: var(--resolve-text); }
-.row .btn-commit--sm { padding-inline: 1rem; }
+/* commit element 4/5: row pills wear the COMPACT variant (palette.md §6.1) —
+   right-aligned in a constant column; the Beat-7 peak stays ≥8× any pill. */
+.row .btn-commit--compact { justify-self: end; }
 
 @media (min-width: 900px) {
   .menu { max-width: 46rem; margin-inline: auto; }
@@ -729,17 +790,21 @@ body::after {
   <section class="desire" data-beat="desire" aria-labelledby="desire-title">
     <div class="wrap desire-grid">
 
+      <!-- the closer look (composition §4 + §7b F6): same woman, different distance —
+           the hero wears the photo as the small brand-emblem cameo; Desire steps IN.
+           Crop scale(1.35) origin 46% 30% PRE-BAKED as a 600px derivative from
+           assets/anna-portrait.png (no CSS-upscale softness). -->
       <figure class="master-figure" style="margin-bottom:var(--s-5)">
         <span class="spark" aria-hidden="true">✦</span>
         <div class="arch-frame">
-          <img src="assets/anna-cameo-420.webp" alt="Anna, the artist behind Eyebrow Shapes"
-               width="420" height="420" loading="lazy" decoding="async">
+          <img src="assets/anna-desire-600.webp" alt="Anna, the artist behind Eyebrow Shapes"
+               width="600" height="750" loading="lazy" decoding="async">
         </div>
       </figure>
 
       <div>
         <header class="desire-head">
-          <p class="kicker">Transport · 1 of 3</p>
+          <p class="kicker kicker--chapter" aria-label="Chapter 1">I</p>
           <h2 class="display" id="desire-title">The Master</h2>
           <hr class="rule rule--short" style="margin:0">
         </header>
@@ -763,13 +828,14 @@ body::after {
   <!-- BEAT 3 · VULNERABILITY · imageless by law · ornament withdrawn -->
   <section class="vuln" data-beat="vulnerability" aria-labelledby="vuln-title">
     <div class="vuln-inner">
+      <p class="kicker kicker--chapter" aria-label="Chapter 2">II</p>
       <h2 class="display" id="vuln-title">First, the part nobody says out loud.</h2>
 
       <div class="vuln-body">
         <div class="maybes">
-          <p>Maybe it&rsquo;s years of penciling them in before anyone can see you.<br>
-          Maybe it&rsquo;s the over-plucking that never grew back.<br>
-          Maybe someone worked on your brows once — and you&rsquo;re still living with it.</p>
+          <p>Maybe it&rsquo;s years of penciling them in before anyone can see you.</p>
+          <p>Maybe it&rsquo;s the over-plucking that never grew back.</p>
+          <p>Maybe someone worked on your brows once — and you&rsquo;re still living with it.</p>
         </div>
 
         <p class="stakes measure">And microblading raises the stakes. Pigment, on your face. The fear of a permanent mistake is real, and it&rsquo;s reasonable.</p>
@@ -788,7 +854,7 @@ body::after {
     <div class="wrap">
 
       <header class="victory-head">
-        <p class="kicker">Transport · 3 of 3</p>
+        <p class="kicker kicker--chapter" aria-label="Chapter 3">III</p>
         <h2 class="display" id="victory-title">The Correction</h2>
         <p class="lead-in">This is what a master&rsquo;s correction looks like.</p>
         <p class="provenance">Her real work, from her own Booksy listing.</p>
@@ -868,17 +934,17 @@ body::after {
           <div class="row">
             <span class="svc"><span class="name">Brow Threading</span><span class="dur">10 min</span></span>
             <span class="price">$20</span>
-            <a class="btn-commit btn-commit--sm" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="brow-threading" aria-label="Book Brow Threading, $20">Book</a>
+            <a class="btn-commit btn-commit--compact" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="brow-threading" aria-label="Book Brow Threading, $20">Book</a>
           </div>
           <div class="row">
             <span class="svc"><span class="name">Brow &amp; Lip Threading</span><span class="dur">10 min</span></span>
             <span class="price">$30</span>
-            <a class="btn-commit btn-commit--sm" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="brow-lip" aria-label="Book Brow and Lip Threading, $30">Book</a>
+            <a class="btn-commit btn-commit--compact" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="brow-lip" aria-label="Book Brow and Lip Threading, $30">Book</a>
           </div>
           <div class="row">
             <span class="svc"><span class="name">Full Face Threading</span><span class="dur">20 min</span></span>
             <span class="price">$55+</span>
-            <a class="btn-commit btn-commit--sm" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="full-face" aria-label="Book Full Face Threading, from $55">Book</a>
+            <a class="btn-commit btn-commit--compact" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="full-face" aria-label="Book Full Face Threading, from $55">Book</a>
           </div>
         </section>
 
@@ -887,7 +953,7 @@ body::after {
           <div class="row">
             <span class="svc"><span class="name">Brow Lamination &amp; Lash Lift</span><span class="dur">1 h 25</span></span>
             <span class="price">$240</span>
-            <a class="btn-commit btn-commit--sm" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="lamination" aria-label="Book Brow Lamination and Lash Lift, $240">Book</a>
+            <a class="btn-commit btn-commit--compact" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="lamination" aria-label="Book Brow Lamination and Lash Lift, $240">Book</a>
           </div>
         </section>
 
@@ -896,12 +962,12 @@ body::after {
           <div class="row">
             <span class="svc"><span class="name">First Session — 3D hair strokes</span><span class="dur">2 h 10</span></span>
             <span class="price">$500</span>
-            <a class="btn-commit btn-commit--sm" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="microblading" aria-label="Book Microblading First Session, $500">Book</a>
+            <a class="btn-commit btn-commit--compact" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="microblading" aria-label="Book Microblading First Session, $500">Book</a>
           </div>
           <div class="row">
             <span class="svc"><span class="name">Touch-up</span><span class="dur">1 h 30</span></span>
             <span class="price">$150</span>
-            <a class="btn-commit btn-commit--sm" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="touchup" aria-label="Book Microblading Touch-up, $150">Book</a>
+            <a class="btn-commit btn-commit--compact" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="touchup" aria-label="Book Microblading Touch-up, $150">Book</a>
           </div>
         </section>
 
@@ -910,7 +976,7 @@ body::after {
           <div class="row">
             <span class="svc"><span class="name">Lymphatic Drainage Sculpting Face-Lifting Massage</span><span class="dur">45 min</span></span>
             <span class="price">$135</span>
-            <a class="btn-commit btn-commit--sm" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="massage" aria-label="Book Face-Lifting Massage, $135">Book</a>
+            <a class="btn-commit btn-commit--compact" href="https://booksy.com/en-us/167793_eyebrow-shapes_brows-lashes_103850_palmdale" data-open-drawer data-service="massage" aria-label="Book Face-Lifting Massage, $135">Book</a>
           </div>
         </section>
 
@@ -923,6 +989,9 @@ body::after {
     <div class="wrap">
 
       <header class="proof-wall">
+        <!-- Tier-2 kicker mounted because Beat 5's "Services" ships (copy.md §13a:
+             the two RESOLVE sections match) -->
+        <p class="kicker">Reviews</p>
         <p class="stars" aria-hidden="true">★★★★★</p>
         <h2 class="numerals" id="proof-title">4.9 stars. 594 reviews.</h2>
         <p class="subline">You won&rsquo;t be the first to trust her with your face.</p>
@@ -1093,7 +1162,7 @@ body::after {
     <!-- STATE 3 · interim send-off (demo) + loading + failure fallback -->
     <div class="drawer-panel" id="panel-handoff" hidden>
       <div class="drawer-head">
-        <h2 class="drawer-title">Almost there</h2>
+        <h2 class="drawer-title">Choose your time</h2>
         <button class="drawer-close" type="button" data-drawer-close>Close</button>
       </div>
       <p style="margin:var(--s-3) 0 0">Next, you&rsquo;ll pick your time on Booksy — real openings, pay nothing now.</p>
